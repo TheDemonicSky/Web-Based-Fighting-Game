@@ -6,12 +6,6 @@ const context = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  animate();
-});
-
 context.fillRect(0, 0, canvas.width, canvas.height);
 
 const player = new Sprite({
@@ -43,6 +37,12 @@ const keys = {
   d: {
     pressed: false,
   },
+  arrowRight: {
+    pressed: false,
+  },
+  arrowLeft: {
+    pressed: false,
+  },
 };
 
 function animate() {
@@ -54,22 +54,52 @@ function animate() {
 
   player.velocity.x = 0;
 
-  if (keys.a.pressed) {
-    player.velocity.x = -1;
-  } else if (keys.d.pressed) {
-    player.velocity.x = 1;
+  if (keys.a.pressed && player.lastKey === "a") {
+    player.velocity.x = -5;
+  } else if (keys.d.pressed && player.lastKey === "d") {
+    player.velocity.x = 5;
+  }
+
+  enemy.velocity.x = 0;
+
+  if (keys.arrowLeft.pressed && enemy.lastKey === "ArrowLeft") {
+    enemy.velocity.x = -5;
+  } else if (keys.arrowRight.pressed && enemy.lastKey === "ArrowRight") {
+    enemy.velocity.x = 5;
   }
 }
 
 animate();
 
+function jump(player) {
+  if (player.position.y + player.height + player.velocity.y >= canvas.height) {
+    player.velocity.y = -20;
+  }
+}
+
 window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "d":
       keys.d.pressed = true;
+      player.lastKey = "d";
       break;
     case "a":
       keys.a.pressed = true;
+      player.lastKey = "a";
+      break;
+    case "w":
+      jump(player);
+      break;
+    case "ArrowUp":
+      jump(enemy);
+      break;
+    case "ArrowRight":
+      keys.arrowRight.pressed = true;
+      enemy.lastKey = "ArrowRight";
+      break;
+    case "ArrowLeft":
+      keys.arrowLeft.pressed = true;
+      enemy.lastKey = "ArrowLeft";
       break;
   }
 });
@@ -81,6 +111,12 @@ window.addEventListener("keyup", (event) => {
       break;
     case "a":
       keys.a.pressed = false;
+      break;
+    case "ArrowRight":
+      keys.arrowRight.pressed = false;
+      break;
+    case "ArrowLeft":
+      keys.arrowLeft.pressed = false;
       break;
   }
 });

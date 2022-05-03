@@ -1,7 +1,7 @@
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
 
-const gravity = 0.2;
+const gravity = 0.7;
 
 export class Sprite {
   constructor({ position, velocity }) {
